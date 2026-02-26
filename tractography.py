@@ -1,3 +1,11 @@
+# /// script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "ipyniivue==2.4.4",
+#     "ipywidgets==8.1.8",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.18.3"
@@ -27,6 +35,7 @@ def _(NiiVue, ShowRender, mo):
         back_color=(1, 1, 1, 1),
         show_3d_crosshair=True,
         multiplanar_show_render=ShowRender.ALWAYS,
+        yoke_3d_to_2d_zoom=True,
     )
 
     nv.load_volumes([
@@ -36,19 +45,10 @@ def _(NiiVue, ShowRender, mo):
     nv.load_meshes([
         {"path": "sub-NDARAA948VFH_ses-HBNsiteRU_acq-64dir_desc-bundles_tractography/sub-NDARAA948VFH_ses-HBNsiteRU_acq-64dir_desc-bundles_tractography.trx"}
     ])
-
-    slider_radius = mo.ui.slider(
-        start=0,
-        stop=1.0,
-        step=0.1,
-        value=0.5,
-        show_value=True,
-        label="Fiber Radius",
-        on_change=lambda v: setattr(nv.meshes[0], "fiber_radius", v),
-    )
+    nv.set_clip_plane(-0.2, 0, 120)
 
     mo.vstack([
-        mo.hstack([slider_radius]),
+        mo.hstack([]),
         nv,
     ])
     return
