@@ -40,7 +40,7 @@ def _(mo):
         "Visualization of white matter fiber bundles from diffusion MRI tractography, overlaid on a T1-weighted anatomical image.\n\n"
         "**Usage:**\n\n"
         "```\n"
-        "VOLUME_PATH=brain.nii.gz TRX_PATH=tracts.trx marimo run --no-sandbox viewer.py\n"
+        "VOLUME_PATH=brain.nii.gz TRX_PATH=tracts.trx marimo run viewer.py\n"
         "```\n\n"
         "White matter tractography is a technique used to reconstruct the neural pathways in the brain from diffusion MRI data. Each fiber bundle represents a group of axons connecting different brain regions. This notebook allows you to interactively explore individual bundles from a [TRX](https://github.com/tee-ar-ex/trx-python) tractography file, selecting regions to visualize one at a time.\n\n"
         "This notebook builds on the [NiiVue marimo notebooks](https://github.com/niivue/marimo-notebooks) by Chris Rorden, which demonstrate the use of [NiiVue](https://github.com/niivue/niivue) for neuroimaging visualization in Marimo. The viewer is powered by [ipyniivue](https://github.com/niivue/ipyniivue), the Python wrapper for NiiVue."
