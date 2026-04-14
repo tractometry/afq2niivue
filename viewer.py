@@ -21,6 +21,7 @@ def _():
     import numpy as np
     import io
     import os
+    import webbrowser
     from ipyniivue import NiiVue, ShowRender
 
     volume_path = os.environ.get("VOLUME_PATH", "")
@@ -30,7 +31,7 @@ def _():
         print("Set VOLUME_PATH and TRX_PATH environment variables")
         print("Example: VOLUME_PATH=brain.nii.gz TRX_PATH=tracts.trx marimo run viewer.py")
 
-    return NiiVue, ShowRender, io, json, mo, np, volume_path, trx_path, zipfile
+    return NiiVue, ShowRender, io, json, mo, np, volume_path, trx_path, zipfile, webbrowser
 
 
 @app.cell
@@ -110,28 +111,44 @@ def _(NiiVue, ShowRender, io, json, mo, np, zipfile, trx_path, volume_path):
         {"path": volume_path}
     ])
 
+    # Load all bundles as separate meshes
+    all_bundles = []
+    for name in group_names:
+        bundle_data = extract_bundle_trx(name)
+        all_bundles.append({"data": bundle_data, "name": f"{name}.trx"})
+
+    nv.load_meshes(all_bundles)
+
     nv.set_clip_plane(-0.2, 0, 120)
 
-    def show_bundle(i):
-        bundle_data = extract_bundle_trx(group_names[i])
-        nv.load_meshes([
-            {"data": bundle_data, "name": f"{group_names[i]}.trx"}
-        ])
-        nv.set_mesh_property(nv.meshes[0].id, "fiber_radius", 0.5)
+    # Hide all bundles initially
+    for mesh in nv.meshes:
+        nv.set_mesh_property(mesh.id, "visible", False)
 
-    region_buttons = [
-        mo.ui.button(
+    # Checkboxes to toggle bundles
+    region_checkboxes = [
+        mo.ui.checkbox(
+            value=False,
             label=name,
-            on_click=lambda _, i=i: show_bundle(i),
+            on_change=lambda checked, i=i: (
+                nv.set_mesh_property(nv.meshes[i].id, "visible", checked),
+                nv.set_mesh_property(
+                    nv.meshes[i].id, "fiber_radius", 0.5 if checked else 0.0),
+            ),
         )
         for i, name in enumerate(group_names)
     ]
+
+    # Split checkboxes into rows of 6
+    rows = []
+    for j in range(0, len(region_checkboxes), 6):
+        rows.append(mo.hstack(region_checkboxes[j:j+6]))
 
     mo.vstack([
         mo.hstack([]),
         nv,
         mo.md("**Regions:**"),
-        mo.hstack(region_buttons, wrap=True),
+        *rows,
     ])
     return
 
