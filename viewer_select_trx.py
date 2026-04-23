@@ -68,6 +68,13 @@ def _(NiiVue, ShowRender):
 
 
 @app.cell
+def _(nv, trx_browser):
+    if not trx_browser.value:
+        nv.load_meshes([])
+    return
+
+
+@app.cell
 def _(io, json, mo, np, nv, zipfile, trx_browser):
     mo.stop(
         not trx_browser.value,
